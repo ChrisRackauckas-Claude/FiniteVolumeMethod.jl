@@ -41,12 +41,11 @@ function get_fvm_parameters(prob::Union{FVMProblem, FVMSystem}, parallel::Val{B}
     end
 end
 
-@doc """
+"""
     jacobian_sparsity(prob)
 
 Returns a prototype for the Jacobian of the given `prob`.
 """
-jacobian_sparsity
 jacobian_sparsity(prob::FVMProblem) = jacobian_sparsity(prob.mesh.triangulation)
 function jacobian_sparsity(prob::FVMSystem{N}) where {N}
     return jacobian_sparsity(prob.mesh.triangulation, N)
@@ -201,11 +200,78 @@ function CommonSolve.init(
         parallel::Val{B} = Val(true),
         kwargs...
     ) where {S, B}
-    ode_prob = SciMLBase.ODEProblem(
-        prob; specialization, jac_prototype, parallel, kwargs...
-    )
+    ode_prob = SciMLBase.ODEProblem(prob; specialization, jac_prototype, parallel, kwargs...)
     return CommonSolve.init(ode_prob, args...; kwargs...)
 end
+
+"""
+    solve(prob::Union{FVMProblem, FVMSystem}, args...;
+        specialization=SciMLBase.AutoSpecialize,
+        jac_prototype=jacobian_sparsity(prob),
+        parallel=Val(true), kwargs...)
+
+Solve the time-dependent finite-volume problem `prob` with a compatible SciML solver.
+
+!!! warning "Missing vertices"
+
+    When the underlying triangulation has points that are not vertices, the solver does
+    not update their solution values; they remain at their initial values.
+
+# Arguments
+
+- `prob`: An [`FVMProblem`](@ref) or [`FVMSystem`](@ref).
+- `args...`: Arguments forwarded to `solve` for the generated `ODEProblem`, normally
+  including the solver algorithm.
+
+# Keyword Arguments
+
+- `specialization=SciMLBase.AutoSpecialize`: Controls SciML function specialization.
+- `jac_prototype=jacobian_sparsity(prob)`: The Jacobian sparsity prototype.
+- `parallel=Val(true)`: Set to `Val(false)` to assemble equations serially.
+- `kwargs...`: Forwarded to the generated `ODEProblem` and solver.
+
+# Returns
+
+The solver's SciML solution. For an `FVMProblem`, each solution component corresponds to
+a mesh node. For an `FVMSystem`, element `(j, i)` corresponds to variable `j` at node `i`.
+"""
+function CommonSolve.solve(
+        prob::Union{FVMProblem, FVMSystem}, args...;
+        specialization::Type{S} = SciMLBase.AutoSpecialize,
+        jac_prototype = jacobian_sparsity(prob),
+        parallel::Val{B} = Val(true),
+        kwargs...
+    ) where {S, B}
+    ode_prob = SciMLBase.ODEProblem(prob; specialization, jac_prototype, parallel, kwargs...)
+    return CommonSolve.solve(ode_prob, args...; kwargs...)
+end
+
+"""
+    solve(prob::SteadyFVMProblem, args...;
+        specialization=SciMLBase.AutoSpecialize,
+        jac_prototype=jacobian_sparsity(prob),
+        parallel=Val(true), kwargs...)
+
+Solve the steady finite-volume problem `prob` with a compatible nonlinear solver.
+
+# Arguments
+
+- `prob`: A [`SteadyFVMProblem`](@ref).
+- `args...`: Arguments forwarded to `solve` for the generated `SteadyStateProblem`,
+  normally including the solver algorithm.
+
+# Keyword Arguments
+
+- `specialization=SciMLBase.AutoSpecialize`: Controls SciML function specialization.
+- `jac_prototype=jacobian_sparsity(prob)`: The Jacobian sparsity prototype.
+- `parallel=Val(true)`: Set to `Val(false)` to assemble equations serially.
+- `kwargs...`: Forwarded to the generated `SteadyStateProblem` and solver.
+
+# Returns
+
+The nonlinear solver's SciML solution. Indexing follows the underlying `FVMProblem` or
+`FVMSystem` as described for the time-dependent `solve` method.
+"""
 function CommonSolve.solve(
         prob::SteadyFVMProblem, args...;
         specialization::Type{S} = SciMLBase.AutoSpecialize,
@@ -218,70 +284,3 @@ function CommonSolve.solve(
     )
     return CommonSolve.solve(nl_prob, args...; kwargs...)
 end
-
-@doc """
-    solve(prob::Union{FVMProblem,FVMSystem}, alg; 
-        specialization=SciMLBase.AutoSpecialize, 
-        jac_prototype=jacobian_sparsity(prob), 
-        parallel::Val{<:Bool}=Val(true),
-        kwargs...)
-
-
-Solves the given [`FVMProblem`](@ref) or [`FVMSystem`](@ref) `prob` with the algorithm `alg`.
-
-!!! warning "Missing vertices"
-
-    When the underlying triangulation, `tri`, has points in `get_points(tri)` that are not 
-    vertices of the triangulation itself, the associated values of the solution at these points
-    will not be updated by the solver, and will remain at their initial values.
-
-# Arguments 
-- `prob`: The problem to be solved.
-- `alg`: The algorithm to be used to solve the problem. This can be any of the algorithms in DifferentialEquations.jl.
-
-# Keyword Arguments
-- `specialization=SciMLBase.AutoSpecialize`: The type of specialization to be used. See https://docs.sciml.ai/DiffEqDocs/stable/features/low_dep/#Controlling-Function-Specialization-and-Precompilation.
-- `jac_prototype=jacobian_sparsity(prob)`: The prototype for the Jacobian matrix, constructed by default from `jacobian_sparsity`.
-- `parallel::Val{<:Bool}=Val(true)`: Whether to use multithreading. Use `Val(false)` to disable multithreading. 
-- `kwargs...`: Any other keyword arguments to be passed to the solver.
-
-# Outputs 
-The returned value `sol` depends on the type of the problem.
-- [`FVMProblem`](@ref)
-
-In this case, `sol::ODESolution` is such that the `i`th component of `sol` refers to the `i`th node of the underlying mesh.
-- [`FVMSystem`](@ref)
-
-In this case, the `(j, i)`th component of `sol::ODESolution` refers to the `i`th node of the underlying mesh for the `j`th component of the system.
-""" solve(::Union{FVMProblem, FVMSystem}, ::Any; kwargs...)
-
-@doc """
-    solve(prob::SteadyFVMProblem, alg; 
-        specialization=SciMLBase.AutoSpecialize, 
-        jac_prototype=jacobian_sparsity(prob),
-        parallel::Val{<:Bool}=Val(true),
-        kwargs...)
-
-
-Solves the given [`FVMProblem`](@ref) or [`FVMSystem`](@ref) `prob` with the algorithm `alg`.
-
-# Arguments 
-- `prob`: The problem to be solved.
-- `alg`: The algorithm to be used to solve the problem. This can be any of the algorithms in NonlinearSolve.jl.
-
-# Keyword Arguments
-- `specialization=SciMLBase.AutoSpecialize`: The type of specialization to be used. See https://docs.sciml.ai/DiffEqDocs/stable/features/low_dep/#Controlling-Function-Specialization-and-Precompilation.
-- `jac_prototype=jacobian_sparsity(prob)`: The prototype for the Jacobian matrix, constructed by default from `jacobian_sparsity`.
-- `parallel::Val{<:Bool}=Val(true)`: Whether to use multithreading. Use `Val(false)` to disable multithreading.
-- `kwargs...`: Any other keyword arguments to be passed to the solver.
-
-# Outputs 
-The returned value `sol` depends on whether the underlying problem is a [`FVMProblem`](@ref) or an [`FVMSystem`](@ref), but in 
-each case it is an `ODESolution` type that can be accessed like the solutions in DifferentialEquations.jl:
-- [`FVMProblem`](@ref)
-
-In this case, `sol` is such that the `i`th component of `sol` refers to the `i`th node of the underlying mesh.
-- [`FVMSystem`](@ref)
-
-In this case, the `(j, i)`th component of `sol` refers to the `i`th node of the underlying mesh for the `j`th component of the system.
-""" solve(::SteadyFVMProblem, ::Any; kwargs...)

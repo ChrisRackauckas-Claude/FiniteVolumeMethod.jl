@@ -34,6 +34,9 @@ These problems can all be solved using the standard `solve` interface from
 DifferentialEquations.jl, just like for [`FVMProblem`](@ref)s. The only exception
 is for steady state problems, in which case the `solve` interface is still used, except
 the interface is from LinearSolve.jl.
+
+Custom subtypes must provide a `problem` property containing the problem passed to the
+underlying `solve` implementation.
 """
 abstract type AbstractFVMTemplate <: AbstractFVMProblem end
 
@@ -59,13 +62,13 @@ function CommonSolve.solve(prob::AbstractFVMTemplate, args...; kwargs...)
     return CommonSolve.solve(prob.problem, args...; kwargs...)
 end
 
-@doc raw"""
+"""
     triangle_contributions!(A, mesh, conditions, diffusion_function, diffusion_parameters)
     
 Add the contributions from each triangle to the matrix `A`, based on the equation 
 
 ```math 
-\dv{u_i}{t} = \frac{1}{V_i}\sum_{\sigma \in \mathcal E_i} D(\vb x_\sigma)\left[\left(s_{k, 11}n_\sigma^x + s_{k, 21}n_\sigma^y\right)u_{k1} + \left(s_{k, 12}n_\sigma^x + s_{k, 22}n_\sigma^y\right)u_{k2} + \left(s_{k, 13}n_\sigma^x + s_{k, 23}n_\sigma^y\right)u_{k3}\right]L_\sigma + S_i, 
+\\dv{u_i}{t} = \\frac{1}{V_i}\\sum_{\\sigma \\in \\mathcal E_i} D(\\vb x_\\sigma)\\left[\\left(s_{k, 11}n_\\sigma^x + s_{k, 21}n_\\sigma^y\\right)u_{k1} + \\left(s_{k, 12}n_\\sigma^x + s_{k, 22}n_\\sigma^y\\right)u_{k2} + \\left(s_{k, 13}n_\\sigma^x + s_{k, 23}n_\\sigma^y\\right)u_{k3}\\right]L_\\sigma + S_i,
 ```
 as explained in the docs. Will not update any rows corresponding to 
 [`Dirichlet`](@ref) or [`Dudt`](@ref) nodes.
@@ -98,7 +101,7 @@ function triangle_contributions!(
     return
 end
 
-@doc raw"""
+"""
     apply_dirichlet_conditions!(initial_condition, mesh, conditions)
 
 Applies the Dirichlet conditions specified in `conditions` to the `initial_condition`. The boundary 
@@ -116,7 +119,7 @@ function apply_dirichlet_conditions!(initial_condition, mesh, conditions)
     return
 end
 
-@doc raw"""
+"""
     apply_dudt_conditions!(b, mesh, conditions)
 
 Applies the Dudt conditions specified in `conditions` to the `b` vector. The boundary   
@@ -134,13 +137,13 @@ function apply_dudt_conditions!(b, mesh, conditions)
     return
 end
 
-@doc raw"""
+"""
     boundary_edge_contributions!(A, b, mesh, conditions, diffusion_function, diffusion_parameters)
 
 Add the contributions from each boundary edge to the matrix `A`, based on the equation 
 
 ```math 
-\dv{u_i}{t} = \frac{1}{V_i}\sum_{\sigma \in \mathcal E_i} D(\vb x_\sigma)\left[\left(s_{k, 11}n_\sigma^x + s_{k, 21}n_\sigma^y\right)u_{k1} + \left(s_{k, 12}n_\sigma^x + s_{k, 22}n_\sigma^y\right)u_{k2} + \left(s_{k, 13}n_\sigma^x + s_{k, 23}n_\sigma^y\right)u_{k3}\right]L_\sigma + S_i, 
+\\dv{u_i}{t} = \\frac{1}{V_i}\\sum_{\\sigma \\in \\mathcal E_i} D(\\vb x_\\sigma)\\left[\\left(s_{k, 11}n_\\sigma^x + s_{k, 21}n_\\sigma^y\\right)u_{k1} + \\left(s_{k, 12}n_\\sigma^x + s_{k, 22}n_\\sigma^y\\right)u_{k2} + \\left(s_{k, 13}n_\\sigma^x + s_{k, 23}n_\\sigma^y\\right)u_{k3}\\right]L_\\sigma + S_i,
 ```
 
 as explained in the docs. Will not update any rows corresponding to 
@@ -159,13 +162,13 @@ function boundary_edge_contributions!(
     return nothing
 end
 
-@doc raw"""
+"""
     neumann_boundary_edge_contributions!(b, mesh, conditions, diffusion_function, diffusion_parameters)
 
 Add the contributions from each Neumann boundary edge to the vector `b`, based on the equation
 
 ```math 
-\dv{u_i}{t} = \frac{1}{V_i}\sum_{\sigma \in \mathcal E_i} D(\vb x_\sigma)\left[\grad u(\vb x_\sigma) \vdot \vu n\right]L_\sigma + S_i,
+\\dv{u_i}{t} = \\frac{1}{V_i}\\sum_{\\sigma \\in \\mathcal E_i} D(\\vb x_\\sigma)\\left[\\grad u(\\vb x_\\sigma) \\vdot \\vu n\\right]L_\\sigma + S_i,
 ```
 
 as explained in the docs. Will not update any rows corresponding to 
@@ -190,13 +193,13 @@ function neumann_boundary_edge_contributions!(
     return nothing
 end
 
-@doc raw"""
+"""
     neumann_boundary_edge_contributions!(F, mesh, conditions, diffusion_function, diffusion_parameters, u, t)
 
 Add the contributions from each Neumann boundary edge to the vector `F`, based on the equation
 
 ```math 
-\dv{u_i}{t} = \frac{1}{V_i}\sum_{\sigma \in \mathcal E_i} D(\vb x_\sigma)\left[\grad u(\vb x_\sigma) \vdot \vu n\right]L_\sigma + S_i,
+\\dv{u_i}{t} = \\frac{1}{V_i}\\sum_{\\sigma \\in \\mathcal E_i} D(\\vb x_\\sigma)\\left[\\grad u(\\vb x_\\sigma) \\vdot \\vu n\\right]L_\\sigma + S_i,
 ```
 
 as explained in the docs. Will not update any rows corresponding to 
@@ -222,13 +225,13 @@ function neumann_boundary_edge_contributions!(
     return nothing
 end
 
-@doc raw"""
+"""
     non_neumann_boundary_edge_contributions!(A, mesh, conditions, diffusion_function, diffusion_parameters)
 
 Add the contributions from each non-Neumann boundary edge to the matrix `A`, based on the equation
 
 ```math
-\dv{u_i}{t} = \frac{1}{V_i}\sum_{\sigma \in \mathcal E_i} D(\vb x_\sigma)\left[\left(s_{k, 11}n_\sigma^x + s_{k, 21}n_\sigma^y\right)u_{k1} + \left(s_{k, 12}n_\sigma^x + s_{k, 22}n_\sigma^y\right)u_{k2} + \left(s_{k, 13}n_\sigma^x + s_{k, 23}n_\sigma^y\right)u_{k3}\right]L_\sigma + S_i, 
+\\dv{u_i}{t} = \\frac{1}{V_i}\\sum_{\\sigma \\in \\mathcal E_i} D(\\vb x_\\sigma)\\left[\\left(s_{k, 11}n_\\sigma^x + s_{k, 21}n_\\sigma^y\\right)u_{k1} + \\left(s_{k, 12}n_\\sigma^x + s_{k, 22}n_\\sigma^y\\right)u_{k2} + \\left(s_{k, 13}n_\\sigma^x + s_{k, 23}n_\\sigma^y\\right)u_{k3}\\right]L_\\sigma + S_i,
 ```
 
 as explained in the docs. Will not update any rows corresponding to 
@@ -287,7 +290,7 @@ function create_rhs_b(mesh, conditions, source_function, source_parameters)
     return b
 end
 
-@doc raw"""
+"""
     apply_steady_dirichlet_conditions!(A, b, mesh, conditions)
 
 Applies the Dirichlet conditions specified in `conditions` to the `initial_condition`. The boundary 
@@ -308,7 +311,7 @@ function apply_steady_dirichlet_conditions!(A, b, mesh, conditions)
     return
 end
 
-@doc """
+"""
     fix_missing_vertices!(A, b, mesh)
 
 Given a system `(A, b)` and a `mesh`, sets `A[i, i] = 1` and `b[i] = 0` for any vertices `i` 

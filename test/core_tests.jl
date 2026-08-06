@@ -20,6 +20,9 @@ end
     @testset verbose = true "Problem" begin
         safe_include("problem.jl")
     end
+    @testset verbose = true "Public API" begin
+        safe_include("public_api.jl")
+    end
     @testset verbose = true "Equations" begin
         safe_include("equations.jl")
     end
