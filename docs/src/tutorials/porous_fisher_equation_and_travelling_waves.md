@@ -64,7 +64,7 @@ takes the solution some time to evolve towards the travelling wave solution.
 Now with this preamble out of the way, let us solve this problem.
 
 ````@example porous_fisher_equation_and_travelling_waves
-using DelaunayTriangulation, FiniteVolumeMethod, OrdinaryDiffEq, LinearSolve
+using DelaunayTriangulation, FiniteVolumeMethod, OrdinaryDiffEq, OrdinaryDiffEqSDIRK, LinearSolve
 a, b, c, d, nx, ny = 0.0, 3.0, 0.0, 40.0, 60, 80
 tri = triangulate_rectangle(a, b, c, d, nx, ny; single_boundary = false)
 mesh = FVMGeometry(tri)
@@ -144,7 +144,7 @@ An uncommented version of this example is given below.
 You can view the source code for this file [here](https://github.com/SciML/FiniteVolumeMethod.jl/tree/main/docs/src/literate_tutorials/porous_fisher_equation_and_travelling_waves.jl).
 
 ```julia
-using DelaunayTriangulation, FiniteVolumeMethod, OrdinaryDiffEq, LinearSolve
+using DelaunayTriangulation, FiniteVolumeMethod, OrdinaryDiffEq, OrdinaryDiffEqSDIRK, LinearSolve
 a, b, c, d, nx, ny = 0.0, 3.0, 0.0, 40.0, 60, 80
 tri = triangulate_rectangle(a, b, c, d, nx, ny; single_boundary = false)
 mesh = FVMGeometry(tri)

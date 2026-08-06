@@ -203,7 +203,7 @@ fvm_prob = SteadyFVMProblem(FVMProblem(mesh, BCs, ICs;
 Let's compare the two solutions.
 
 ````@example mean_exit_time
-using SteadyStateDiffEq, OrdinaryDiffEq
+using SteadyStateDiffEq, OrdinaryDiffEq, OrdinaryDiffEqSDIRK
 fvm_sol = solve(fvm_prob, DynamicSS(TRBDF2()))
 fvm_sol |> tc #hide
 ````
@@ -364,7 +364,7 @@ fvm_prob = SteadyFVMProblem(FVMProblem(mesh, BCs, ICs;
     final_time = Inf,
     initial_condition))
 
-using SteadyStateDiffEq, OrdinaryDiffEq
+using SteadyStateDiffEq, OrdinaryDiffEq, OrdinaryDiffEqSDIRK
 fvm_sol = solve(fvm_prob, DynamicSS(TRBDF2()))
 
 ax = Axis(fig[1, 2], width = 600, height = 600, title = "Template")

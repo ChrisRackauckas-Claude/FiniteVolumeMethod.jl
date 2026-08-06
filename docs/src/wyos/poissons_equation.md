@@ -151,7 +151,7 @@ fvm_prob = SteadyFVMProblem(FVMProblem(mesh, BCs;
 ````
 
 ````@example poissons_equation
-using SteadyStateDiffEq, OrdinaryDiffEq
+using SteadyStateDiffEq, OrdinaryDiffEq, OrdinaryDiffEqSDIRK
 fvm_sol = solve(fvm_prob, DynamicSS(TRBDF2(linsolve = KLUFactorization())))
 fvm_sol |> tc #hide
 ````
@@ -491,7 +491,7 @@ fvm_prob = SteadyFVMProblem(FVMProblem(mesh, BCs;
     initial_condition,
     final_time = Inf))
 
-using SteadyStateDiffEq, OrdinaryDiffEq
+using SteadyStateDiffEq, OrdinaryDiffEq, OrdinaryDiffEqSDIRK
 fvm_sol = solve(fvm_prob, DynamicSS(TRBDF2(linsolve = KLUFactorization())))
 
 prob = PoissonsEquation(mesh, BCs; source_function = source_function)

@@ -109,7 +109,7 @@ In my experience, I've found that `TRBDF2(linsolve=KLUFactorization())` typicall
 has the best performance for these problems.
 
 ````@example diffusion_equation_in_a_wedge_with_mixed_boundary_conditions
-using OrdinaryDiffEq, LinearSolve
+using OrdinaryDiffEq, OrdinaryDiffEqSDIRK, LinearSolve
 sol = solve(prob, TRBDF2(linsolve = KLUFactorization()), saveat = 0.01, parallel = Val(false))
 ind = findall(DelaunayTriangulation.each_point_index(tri)) do i #hide
     !DelaunayTriangulation.has_vertex(tri, i) #hide
@@ -172,7 +172,7 @@ prob = FVMProblem(mesh, BCs; diffusion_function = D, initial_condition, final_ti
 
 flux = (x, y, t, α, β, γ, p) -> (-α, -β)
 
-using OrdinaryDiffEq, LinearSolve
+using OrdinaryDiffEq, OrdinaryDiffEqSDIRK, LinearSolve
 sol = solve(prob, TRBDF2(linsolve = KLUFactorization()), saveat = 0.01, parallel = Val(false))
 
 using CairoMakie

@@ -78,7 +78,7 @@ prob = FVMProblem(mesh, BCs;
 
 ````@example porous_medium_equation
 # Step 4: Solve
-using LinearSolve, OrdinaryDiffEq
+using LinearSolve, OrdinaryDiffEq, OrdinaryDiffEqSDIRK
 sol = solve(prob, TRBDF2(linsolve = KLUFactorization()); saveat = 3.0)
 sol |> tc #hide
 ````
@@ -219,7 +219,7 @@ prob = FVMProblem(mesh, BCs;
     final_time)
 
 # Step 4: Solve
-using LinearSolve, OrdinaryDiffEq
+using LinearSolve, OrdinaryDiffEq, OrdinaryDiffEqSDIRK
 sol = solve(prob, TRBDF2(linsolve = KLUFactorization()); saveat = 3.0)
 
 # Step 5: Visualise

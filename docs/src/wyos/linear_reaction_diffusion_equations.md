@@ -38,7 +38,7 @@ We can also reuse `apply_dirichlet_conditions!`, `apply_dudt_conditions`, and
 `boundary_edge_contributions!` from the diffusion equation example. Here is our implementation.
 
 ````@example linear_reaction_diffusion_equations
-using FiniteVolumeMethod, SparseArrays, OrdinaryDiffEq, LinearAlgebra
+using FiniteVolumeMethod, SparseArrays, OrdinaryDiffEq, LinearAlgebra, SciMLOperators
 const FVM = FiniteVolumeMethod
 function linear_source_contributions!(
         A, mesh, conditions, source_function, source_parameters)
@@ -191,7 +191,7 @@ An uncommented version of this example is given below.
 You can view the source code for this file [here](https://github.com/SciML/FiniteVolumeMethod.jl/tree/main/docs/src/literate_wyos/linear_reaction_diffusion_equations.jl).
 
 ```julia
-using FiniteVolumeMethod, SparseArrays, OrdinaryDiffEq, LinearAlgebra
+using FiniteVolumeMethod, SparseArrays, OrdinaryDiffEq, LinearAlgebra, SciMLOperators
 const FVM = FiniteVolumeMethod
 function linear_source_contributions!(
         A, mesh, conditions, source_function, source_parameters)

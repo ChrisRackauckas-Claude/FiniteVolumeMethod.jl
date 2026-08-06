@@ -91,7 +91,7 @@ algorithm above.
 using NonlinearSolve
 sol = solve(steady_prob, NewtonRaphson())
 copyto!(prob.initial_condition, sol.u) # this also changes steady_prob's initial condition
-using SteadyStateDiffEq, LinearSolve, OrdinaryDiffEq
+using SteadyStateDiffEq, LinearSolve, OrdinaryDiffEq, OrdinaryDiffEqSDIRK
 sol = solve(steady_prob, DynamicSS(TRBDF2(linsolve = KLUFactorization())))
 sol |> tc #hide
 ````
@@ -132,7 +132,7 @@ steady_prob = SteadyFVMProblem(prob)
 using NonlinearSolve
 sol = solve(steady_prob, NewtonRaphson())
 copyto!(prob.initial_condition, sol.u) # this also changes steady_prob's initial condition
-using SteadyStateDiffEq, LinearSolve, OrdinaryDiffEq
+using SteadyStateDiffEq, LinearSolve, OrdinaryDiffEq, OrdinaryDiffEqSDIRK
 sol = solve(steady_prob, DynamicSS(TRBDF2(linsolve = KLUFactorization())))
 
 using CairoMakie

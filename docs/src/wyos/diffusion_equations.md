@@ -277,7 +277,7 @@ end
 Let's now test the function. We use the same problem as in [this tutorial](../tutorials/diffusion_equation_on_a_square_plate.md).
 
 ````@example diffusion_equations
-using DelaunayTriangulation, OrdinaryDiffEq, LinearAlgebra, SparseArrays
+using DelaunayTriangulation, OrdinaryDiffEq, OrdinaryDiffEqSDIRK, LinearAlgebra, SparseArrays, SciMLOperators
 tri = triangulate_rectangle(0, 2, 0, 2, 50, 50, single_boundary = true)
 mesh = FVMGeometry(tri)
 BCs = BoundaryConditions(mesh, (x, y, t, u, p) -> zero(x), Dirichlet)
@@ -349,6 +349,10 @@ fvm_prob = FVMProblem(mesh, BCs;
     end,
     initial_condition,
     final_time)
+````
+
+````@example diffusion_equations
+using LinearSolve
 ````
 
 ````julia
@@ -590,7 +594,7 @@ function diffusion_equation(mesh::FVMGeometry,
     return prob
 end
 
-using DelaunayTriangulation, OrdinaryDiffEq, LinearAlgebra, SparseArrays
+using DelaunayTriangulation, OrdinaryDiffEq, OrdinaryDiffEqSDIRK, LinearAlgebra, SparseArrays, SciMLOperators
 tri = triangulate_rectangle(0, 2, 0, 2, 50, 50, single_boundary = true)
 mesh = FVMGeometry(tri)
 BCs = BoundaryConditions(mesh, (x, y, t, u, p) -> zero(x), Dirichlet)
