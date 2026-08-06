@@ -16,7 +16,8 @@ using DelaunayTriangulation: DelaunayTriangulation, Triangulation,
 using LinearAlgebra: LinearAlgebra, norm
 using PreallocationTools: PreallocationTools, DiffCache, get_tmp
 using SciMLBase: SciMLBase, CallbackSet, DiscreteCallback, LinearProblem,
-    MatrixOperator, ODEFunction, ODEProblem, SteadyStateProblem
+    ODEFunction, ODEProblem, SteadyStateProblem
+using SciMLOperators: SciMLOperators, MatrixOperator
 using SparseArrays: SparseArrays, sparse
 using Base.Threads
 
