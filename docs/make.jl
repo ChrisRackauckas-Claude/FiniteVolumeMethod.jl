@@ -207,7 +207,6 @@ makedocs(;
     ),
     draft = IS_LIVESERVER,
     pages = _PAGES,
-    warnonly = true
 )
 
 deploydocs(;

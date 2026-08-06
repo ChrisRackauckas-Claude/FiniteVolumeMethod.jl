@@ -150,7 +150,7 @@ steady_prob = SteadyFVMProblem(prob)
 Now let's solve the problem.
 
 ````@example laplaces_equation_with_internal_dirichlet_conditions
-using SteadyStateDiffEq, LinearSolve, OrdinaryDiffEq
+using SteadyStateDiffEq, LinearSolve, OrdinaryDiffEq, OrdinaryDiffEqSDIRK
 sol = solve(steady_prob, DynamicSS(TRBDF2(linsolve = KLUFactorization())))
 sol |> tc #hide
 ````
@@ -226,7 +226,7 @@ prob = FVMProblem(mesh, BCs, ICs;
 
 steady_prob = SteadyFVMProblem(prob)
 
-using SteadyStateDiffEq, LinearSolve, OrdinaryDiffEq
+using SteadyStateDiffEq, LinearSolve, OrdinaryDiffEq, OrdinaryDiffEqSDIRK
 sol = solve(steady_prob, DynamicSS(TRBDF2(linsolve = KLUFactorization())))
 
 fig, ax, sc = tricontourf(tri, sol.u, levels = LinRange(0, 100, 28))

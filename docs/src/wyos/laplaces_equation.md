@@ -148,7 +148,7 @@ fvm_prob = SteadyFVMProblem(FVMProblem(mesh, BCs;
 ````
 
 ````@example laplaces_equation
-using SteadyStateDiffEq, OrdinaryDiffEq
+using SteadyStateDiffEq, OrdinaryDiffEq, OrdinaryDiffEqSDIRK
 fvm_sol = solve(fvm_prob, DynamicSS(TRBDF2()))
 fvm_sol |> tc #hide
 ````
@@ -315,7 +315,7 @@ fvm_prob = SteadyFVMProblem(FVMProblem(mesh, BCs;
     initial_condition,
     final_time = Inf))
 
-using SteadyStateDiffEq, OrdinaryDiffEq
+using SteadyStateDiffEq, OrdinaryDiffEq, OrdinaryDiffEqSDIRK
 fvm_sol = solve(fvm_prob, DynamicSS(TRBDF2()))
 
 ax = Axis(fig[1, 2], xlabel = "x", ylabel = "y", width = 600, height = 600)

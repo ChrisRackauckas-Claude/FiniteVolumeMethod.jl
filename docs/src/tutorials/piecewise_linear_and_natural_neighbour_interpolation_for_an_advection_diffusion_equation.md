@@ -126,7 +126,7 @@ prob = FVMProblem(mesh, BCs;
 Now we can solve and visualise the solution.
 
 ````@example piecewise_linear_and_natural_neighbour_interpolation_for_an_advection_diffusion_equation
-using OrdinaryDiffEq, LinearSolve
+using OrdinaryDiffEq, OrdinaryDiffEqSDIRK, LinearSolve
 times = [0, 10, 25, 50, 100, 200, 250]
 sol = solve(prob, TRBDF2(linsolve = KLUFactorization()), saveat = times)
 sol |> tc #hide
@@ -351,7 +351,7 @@ prob = FVMProblem(mesh, BCs;
     flux_parameters,
     final_time)
 
-using OrdinaryDiffEq, LinearSolve
+using OrdinaryDiffEq, OrdinaryDiffEqSDIRK, LinearSolve
 times = [0, 10, 25, 50, 100, 200, 250]
 sol = solve(prob, TRBDF2(linsolve = KLUFactorization()), saveat = times)
 
