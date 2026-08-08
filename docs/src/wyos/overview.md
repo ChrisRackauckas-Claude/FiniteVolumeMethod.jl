@@ -32,6 +32,7 @@ for specific types of problems, namely:
 The docstrings below define the templates for these problems.
 
 ```@docs
+FiniteVolumeMethod.AbstractFVMProblem
 FiniteVolumeMethod.AbstractFVMTemplate
 solve(::FiniteVolumeMethod.AbstractFVMTemplate, args...; kwargs...)
 DiffusionEquation

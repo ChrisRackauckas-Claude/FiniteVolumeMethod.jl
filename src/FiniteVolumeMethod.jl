@@ -37,6 +37,55 @@ include("utils.jl")
 
 include("specific_problems/abstract_templates.jl")
 
+# Keep the source loadable on Julia 1.10, which cannot parse `public` declarations.
+@static if VERSION >= v"1.11.0-DEV.469"
+    eval(
+        Expr(
+            :public,
+            :AbstractFVMProblem,
+            :AbstractFVMTemplate,
+            :TriangleProperties,
+            :ConditionType,
+            :ParametrisedFunction,
+            :get_dirichlet_fidx,
+            :is_dirichlet_node,
+            :get_dirichlet_nodes,
+            :has_dirichlet_nodes,
+            :get_dudt_fidx,
+            :is_dudt_node,
+            :get_dudt_nodes,
+            :has_dudt_nodes,
+            :get_neumann_fidx,
+            :is_neumann_edge,
+            :has_neumann_edges,
+            :get_neumann_edges,
+            :get_constrained_fidx,
+            :is_constrained_edge,
+            :has_constrained_edges,
+            :get_constrained_edges,
+            :eval_condition_fnc,
+            :has_condition,
+            :get_cv_components,
+            :get_boundary_cv_components,
+            :get_triangle_props,
+            :get_volume,
+            :fvm_eqs!,
+            :triangle_contributions!,
+            :apply_dirichlet_conditions!,
+            :apply_dudt_conditions!,
+            :boundary_edge_contributions!,
+            :non_neumann_boundary_edge_contributions!,
+            :neumann_boundary_edge_contributions!,
+            :create_rhs_b,
+            :apply_steady_dirichlet_conditions!,
+            :two_point_interpolant,
+            :get_dirichlet_callback,
+            :jacobian_sparsity,
+            :fix_missing_vertices!,
+        )
+    )
+end
+
 export FVMGeometry,
     FVMProblem,
     FVMSystem,

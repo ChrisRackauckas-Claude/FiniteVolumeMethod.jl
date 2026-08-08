@@ -1,3 +1,11 @@
+"""
+    abstract type AbstractFVMProblem end
+
+Supertype for finite-volume problems and reusable problem templates.
+
+Subtypes that use the generic geometry and condition helpers must provide `mesh` and
+`conditions` properties.
+"""
 abstract type AbstractFVMProblem end
 @inline get_dudt_fidx(prob::AbstractFVMProblem, i) = get_dudt_fidx(prob.conditions, i)
 @inline get_neumann_fidx(prob::AbstractFVMProblem, i, j) = get_neumann_fidx(prob.conditions, i, j)
@@ -91,7 +99,9 @@ The final time.
 
 # Outputs
 
-The returned value is the corresponding [`FVMProblem`](@ref) struct. You can then solve the problem using [`solve(::Union{FVMProblem,FVMSystem}, ::Any; kwargs...)`](@ref) from DifferentialEquations.jl.
+The returned value is the corresponding [`FVMProblem`](@ref) struct. You can then solve the
+problem using [`solve(::Union{FVMProblem,FVMSystem}, args...; kwargs...)`](@ref) from
+DifferentialEquations.jl.
 """
 struct FVMProblem{FG, BC, F, FP, R, RP, IC, FT} <: AbstractFVMProblem
     mesh::FG
@@ -166,7 +176,7 @@ end
     SteadyFVMProblem(prob::AbstractFVMProblem)
 
 This is a wrapper for an `AbstractFVMProblem` that indicates that the problem is to be solved as a steady-state problem.
-You can then solve the problem using [`solve(::SteadyFVMProblem, ::Any; kwargs...)`](@ref) from NonlinearSolve.jl. Note that you
+You can then solve the problem using [`solve(::SteadyFVMProblem, args...; kwargs...)`](@ref) from NonlinearSolve.jl. Note that you
 need to have set the final time to `Inf` if you want a steady state out at infinity rather than some finite actual time.
 
 See also [`FVMProblem`](@ref) and [`FVMSystem`](@ref).
