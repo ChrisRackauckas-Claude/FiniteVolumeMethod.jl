@@ -1,9 +1,5 @@
 [Core]
 versions = ["lts", "1", "pre"]
 
-["1"]
-os = ["ubuntu-latest"]
-arch = "x86"
-
 [QA]
 versions = ["lts", "1"]
